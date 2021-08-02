@@ -15,12 +15,12 @@ public class EVMCoQRUTILTest {
     private EMVCoQRUtil emvCoQRUtil;
 
     public EVMCoQRUTILTest() throws Exception {
-        String STATIC_EMV_QR_CODE = "00020101021129230019night_man_1990@trmc5204599953031165802KH5909Night Man6010Phnom Penh630415FF";
+        String STATIC_EMV_QR_CODE = "00020101021129150011tra_og@trmc5204599953038405802KH5906Tra OG6002KP63044967";
         emvCoQRUtil = new EMVCoQRUtil(STATIC_EMV_QR_CODE);
     }
 
     @Test
-    void testEMVCoQRCode() {
+    void testEMVCoQRCode() {  //---------class path: emv.reader
         Assertions.assertThat(emvCoQRUtil.getPayloadFormatIndicator()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getPointOfInitiationMethod()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getSubTagValueByTag(29, 00)).isNotEmpty();
@@ -30,12 +30,11 @@ public class EVMCoQRUTILTest {
         Assertions.assertThat(emvCoQRUtil.getMerchantName()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getMerchantCity()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getCRC()).isNotEmpty();
-        System.out.println(emvCoQRUtil);
     }
 
 
     @Test
-    void TestGenerateAndParseMVCoQR() throws Exception {
+    void TestGenerateAndParseMVCoQR() throws Exception {  //--------- class path: emv.qrcode
         EMVQRCodeData emvQrData = new EMVQRCodeData();
         emvQrData.setCountryCode("KH");
         emvQrData.setMerchantCity("KP");
@@ -44,7 +43,7 @@ public class EVMCoQRUTILTest {
         emvQrData.setMerchantName("Tra OG");
         MAIData maiData = new MAIData(PPTag.TAG_29_MAI_TEMPLATE.getTag());
         maiData.setAID("tra_og@trmc");
-        emvQrData.setDynamicMAIDTag(maiData);
+        emvQrData.setMAIData(PPTag.TAG_29_MAI_TEMPLATE.getTag(),maiData);
         String rawData = emvQrData.generateEMVQRString();
         System.out.println(rawData);
         EMVQRCodeData emvqrCodeData = Parser.parse(rawData);
