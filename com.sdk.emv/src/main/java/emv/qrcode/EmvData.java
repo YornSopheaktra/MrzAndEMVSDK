@@ -1,5 +1,7 @@
 package emv.qrcode;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +9,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class EmvData {
 
     private int length;
@@ -16,14 +20,13 @@ public class EmvData {
     private List<EmvData> subEmvs;
 
     public EmvData setSubEmv(int tagId, List<EmvData> subEmvs){
+        String subTagVal = this.generateSubEmvStr(subEmvs);
         this.tagId = tagId;
         this.subEmvs =subEmvs;
-        String subTagVal = this.generateSubEmvStr(subEmvs);
         this.length = subTagVal.length();
-        this.value = this.generateSubEmvStr(subEmvs);
+        this.value = subTagVal;
         return this;
     }
-
 
   private String generateSubEmvStr(List<EmvData> subEmvs) {
         StringBuilder emv = new StringBuilder();
@@ -40,16 +43,6 @@ public class EmvData {
         this.length = length;
         this.value = value;
         this.tagId = tagId;
-    }
-
-    public String toEmvStr(){
-        return "EmvData{" +
-                "length=" + length +
-                ", values='" + value + '\'' +
-                ", tagId=" + tagId +
-                ", subEmv=" + subEmvs +
-                '}';
-
     }
 
     @Override

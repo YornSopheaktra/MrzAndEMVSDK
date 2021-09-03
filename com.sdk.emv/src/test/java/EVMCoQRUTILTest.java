@@ -30,7 +30,7 @@ public class EVMCoQRUTILTest {
 
     @Test
     void testEMVCoQRCode_Read_Expected_ok() throws Exception {
-        EMVCoQRUtil emvCoQRUtil = new EMVCoQRUtil("00020101021229150011tra_og@trmc5204599953031165408100000.05802KH5906Tra OG6010Phnom Penh63048295");
+        EMVCoQRUtil emvCoQRUtil = new EMVCoQRUtil("00020101021229240020sopheaktra_yorn@trmc52045999530311654064000.05802KH5906Tra OG6010Phnom Penh63044ECA");
         Assertions.assertThat(emvCoQRUtil.getPayloadFormatIndicator()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getPointOfInitiationMethod()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getSubTagValueByTag(29, 00)).isNotEmpty();

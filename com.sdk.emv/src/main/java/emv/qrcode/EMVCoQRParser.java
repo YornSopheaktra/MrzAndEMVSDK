@@ -174,12 +174,10 @@ public abstract class EMVCoQRParser {
                     Optional<String> subValue = this.getSafeTagValue(emvData.getValue(), (subTagInd + LENGTH), (subTagInd + LENGTH + subLengthValue.get()));
                     if (!subValue.isPresent()) break;
                     EmvData subEmvData = new EmvData(lengthValue.get(), subValue.get(), subTag.get());
-                    System.out.println("Sub Tag: " + subEmvData.getTagId() + "Lenght: " + subEmvData.getLength() + "Value: " + subEmvData.getValue());
                     emvData.getSubEmvs().add(subEmvData);
                     j = subTagInd + LENGTH + subLengthValue.get();
                 }
                 emvDataList.add(emvData);
-                System.out.println("Main Tag: " + emvData.getTagId() + "Lenght: " + emvData.getLength() + "Value: " + emvData.getValue());
                 i = tagInd + LENGTH + lengthValue.get();
             }
             return emvDataList;
