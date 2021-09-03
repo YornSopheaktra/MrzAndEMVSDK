@@ -1,26 +1,20 @@
-package emv.qrcode.util;
+package emv.qrcode;
 
-import java.io.UnsupportedEncodingException;
+import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
-public class CheckSumUtils {
-    private CheckSumUtils() {
-    }
+import java.nio.charset.StandardCharsets;
 
+@NoArgsConstructor
+public class CRC16Util {
     public static String generateChecksumCRC16(String data) {
+        Assert.notNull(data, "Data QR cannot be blank or null");
         int crc = 65535;
         int polynomial = 4129;
-        ValidationUtils.notNull(data);
-
         byte[] bytes;
-        try {
-            bytes = data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException var11) {
-            return null;
-        }
-
+        bytes = data.getBytes(StandardCharsets.UTF_8);
         byte[] var4 = bytes;
         int var5 = bytes.length;
-
         for(int var6 = 0; var6 < var5; ++var6) {
             byte b = var4[var6];
 
@@ -33,34 +27,18 @@ public class CheckSumUtils {
                 }
             }
         }
-
         crc &= 65535;
         return String.format("%04X", crc);
     }
 
     public static boolean validateChecksumCRC16(String data) {
-        ValidationUtils.notNull(data);
+        Assert.notNull(data, "Data QR cannot be blank or null");
         boolean isValid = false;
         if (data.length() > 4) {
             String content = data.substring(0, data.length() - 4);
             String crc = data.substring(data.length() - 4).toUpperCase();
             isValid = crc.equals(generateChecksumCRC16(content));
         }
-
         return isValid;
-    }
-
-    public static boolean validateChecksum(String numberString) {
-        ValidationUtils.notNull(numberString);
-        return !ValidationUtils.isNumeric(numberString) ? false : CheckSum.validate(numberString);
-    }
-
-    public static int generateChecksum(String numberString) throws Exception{
-        ValidationUtils.notNull(numberString);
-        if (!ValidationUtils.isNumeric(numberString)) {
-            throw new Exception("The string "+ numberString +" is not numeric");
-        } else {
-            return CheckSum.checkSum(numberString, true);
-        }
     }
 }

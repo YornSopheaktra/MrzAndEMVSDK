@@ -1,26 +1,36 @@
-
-import emv.qrcode.enums.CurrencyEnum;
-import emv.qrcode.enums.PPTag;
-import emv.qrcode.model.EMVQRCodeData;
-import emv.qrcode.model.MAIData;
-import emv.qrcode.parser.Parser;
-import emv.reader.EMVCoQRUtil;
+import emv.qrcode.CurrencyUtil;
+import emv.qrcode.CRC16Util;
+import emv.qrcode.EMVCoQRUtil;
+import emv.qrcode.EmvData;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class EVMCoQRUTILTest {
 
-    private EMVCoQRUtil emvCoQRUtil;
-
-    public EVMCoQRUTILTest() throws Exception {
-        String STATIC_EMV_QR_CODE = "00020101021129230019night_man_1990@trmc5204599953031165802KH5909Night Man6010Phnom Penh630415FF";
-        emvCoQRUtil = new EMVCoQRUtil(STATIC_EMV_QR_CODE);
+    @Test
+    void testGenerateEMVQR_Expected_Ok() {
+        EMVCoQRUtil emvCoQRUtil = new EMVCoQRUtil();
+        List<EmvData> merchantInfo = Arrays.asList(new EmvData(0, "sopheaktra_yorn@trmc")
+        );
+        EmvData merchantInfoTag = new EmvData().setSubEmv(29, merchantInfo);
+        emvCoQRUtil.add(merchantInfoTag)
+                .add(new EmvData(52, "5999"))
+                .add(new EmvData(53, "116"))
+                .add(new EmvData(54, "4000.0"))
+                .add(new EmvData(58, "KH"))
+                .add(new EmvData(59, "Tra OG"))
+                .add(new EmvData(60, "Phnom Penh"));
+        String QRRawContent = emvCoQRUtil.generateEMVQR();
+        Assertions.assertThat(CRC16Util.validateChecksumCRC16(QRRawContent)).isTrue();
+        Assertions.assertThat(QRRawContent).isNotEmpty();
     }
 
     @Test
-    void testEMVCoQRCode() {
+    void testEMVCoQRCode_Read_Expected_ok() throws Exception {
+        EMVCoQRUtil emvCoQRUtil = new EMVCoQRUtil("00020101021229150011tra_og@trmc5204599953031165408100000.05802KH5906Tra OG6010Phnom Penh63048295");
         Assertions.assertThat(emvCoQRUtil.getPayloadFormatIndicator()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getPointOfInitiationMethod()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getSubTagValueByTag(29, 00)).isNotEmpty();
@@ -30,26 +40,12 @@ public class EVMCoQRUTILTest {
         Assertions.assertThat(emvCoQRUtil.getMerchantName()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getMerchantCity()).isNotEmpty();
         Assertions.assertThat(emvCoQRUtil.getCRC()).isNotEmpty();
-        System.out.println(emvCoQRUtil);
     }
-
 
     @Test
-    void TestGenerateAndParseMVCoQR() throws Exception {
-        EMVQRCodeData emvQrData = new EMVQRCodeData();
-        emvQrData.setCountryCode("KH");
-        emvQrData.setMerchantCity("KP");
-        emvQrData.setMerchantCategoryCode("5999");
-        emvQrData.setTransactionCurrencyCode(CurrencyEnum.USD.getCurrencyCode());
-        emvQrData.setMerchantName("Tra OG");
-        MAIData maiData = new MAIData(PPTag.TAG_29_MAI_TEMPLATE.getTag());
-        maiData.setAID("tra_og@trmc");
-        emvQrData.setDynamicMAIDTag(maiData);
-        String rawData = emvQrData.generateEMVQRString();
-        System.out.println(rawData);
-        EMVQRCodeData emvqrCodeData = Parser.parse(rawData);
-        List<MAIData> maiDataList = emvqrCodeData.getMAIData();
-        Assertions.assertThat(maiDataList).isNotEmpty();
+    public void TestCurrencyCode_Expected_OK(){
+        CurrencyUtil currencyUtil = new CurrencyUtil("KHR");
+        Assertions.assertThat(currencyUtil.getCurrencyName()).isNotEmpty();
+        Assertions.assertThat(currencyUtil.getCurrencyCode()).isNotNegative();
     }
-
 }

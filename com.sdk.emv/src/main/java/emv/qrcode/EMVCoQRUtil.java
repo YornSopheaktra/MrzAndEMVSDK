@@ -1,21 +1,15 @@
-package emv.reader;
+package emv.qrcode;
+
+import lombok.NoArgsConstructor;
+
 import java.util.Optional;
 
+@NoArgsConstructor
 public class EMVCoQRUtil extends EMVCoQRParser {
 
     public EMVCoQRUtil(String emvCoQrValue) throws Exception {
         super(emvCoQrValue);
     }
-
-    private static final Integer PAYLOAD_FORMAT_INDICATOR = 00;
-    private static final Integer POINT_OF_INITIATION_METHOD = 01;
-    private static final Integer GLOBALLY_UNIQUE_IDENTIFIER = 00;
-    private static final Integer MERCHANT_CATEGORY_CODE = 52;
-    private static final Integer TRANSACTION_CURRENCY = 53;
-    private static final Integer COUNTRY_CODE = 58;
-    private static final Integer MERCHANT_NAME = 59;
-    private static final Integer MERCHANT_CITY = 60;
-    private static final Integer CRC = 63;
 
     public Optional<String> getPayloadFormatIndicator() {
         return getTagValue(PAYLOAD_FORMAT_INDICATOR);
@@ -53,5 +47,6 @@ public class EMVCoQRUtil extends EMVCoQRParser {
     public String toString() {
         return super.toString();
     }
+
 }
 
